@@ -5,6 +5,8 @@ import { logger } from '../../lib/logger';
 
 const MAX_RETRIES = 3;
 const BASE_DELAY_MS = 500;
+// Gemini batchEmbedContents hard limit is 100 requests per call
+const GEMINI_BATCH_LIMIT = 100;
 
 /**
  * Adapter: wraps the Gemini embeddings API behind the EmbeddingProvider interface.
@@ -33,7 +35,14 @@ export class GeminiEmbeddingProvider implements EmbeddingProvider {
 
     logger.debug({ count: texts.length, model: this.model }, 'Embedding batch');
 
-    return this.embedBatchWithRetry(texts);
+    // Split into sub-batches of at most GEMINI_BATCH_LIMIT to respect the
+    // Gemini API limit of 100 requests per batchEmbedContents call.
+    const subBatches = chunkArray(texts, GEMINI_BATCH_LIMIT);
+    const results: Float32Array[][] = await Promise.all(
+      subBatches.map((batch) => this.embedBatchWithRetry(batch))
+    );
+
+    return results.flat();
   }
 
   private async embedBatchWithRetry(texts: string[]): Promise<Float32Array[]> {
@@ -105,4 +114,13 @@ function errorMessage(err: unknown): string {
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Split an array into sub-arrays of at most `size` elements. */
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
 }
