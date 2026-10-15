@@ -1,0 +1,273 @@
+/* ── Reset & base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #1a1a1a;
+  background: #f5f5f5;
+}
+
+/* ── Layout ───────────────────────────────────────────────────────────────── */
+.app {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 16px 64px;
+}
+
+.app-header {
+  padding: 32px 0 24px;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 32px;
+}
+
+.app-title {
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.app-subtitle {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.app-main { display: flex; flex-direction: column; gap: 32px; }
+
+.section {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px 24px;
+}
+
+.section-title {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.item-count { font-weight: 400; color: #888; font-size: 14px; }
+
+/* ── AddItemForm ──────────────────────────────────────────────────────────── */
+.add-item-form { display: flex; flex-direction: column; gap: 12px; }
+
+.type-toggle { display: flex; gap: 8px; }
+
+.toggle-btn {
+  padding: 6px 16px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.toggle-btn:hover { background: #f0f0f0; }
+.toggle-btn.active {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
+}
+
+.content-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+.content-input:focus { outline: none; border-color: #555; }
+.content-input:disabled { background: #f8f8f8; color: #999; }
+
+.form-error {
+  margin: 0;
+  padding: 8px 12px;
+  background: #fff5f5;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.submit-btn {
+  align-self: flex-start;
+  padding: 8px 20px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  min-width: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s;
+}
+.submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.submit-btn:hover:not(:disabled) { opacity: 0.85; }
+
+/* ── Spinner ──────────────────────────────────────────────────────────────── */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── AskBox ───────────────────────────────────────────────────────────────── */
+.ask-box { display: flex; gap: 8px; }
+
+.ask-input {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+}
+.ask-input:focus { outline: none; border-color: #555; }
+.ask-input:disabled { background: #f8f8f8; color: #999; }
+
+/* ── AnswerPanel ──────────────────────────────────────────────────────────── */
+.answer-panel {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+.answer-text {
+  margin: 0 0 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.answer-error {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #fff5f5;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.answer-meta { margin: 0; font-size: 13px; color: #888; }
+
+/* Source cards — Phase 9 */
+.source-cards { display: flex; flex-direction: column; gap: 8px; }
+.source-card {
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 13px;
+}
+.source-index {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+.source-header { display: flex; align-items: center; margin-bottom: 4px; }
+.source-title { font-weight: 500; }
+.source-score { margin-left: auto; color: #888; }
+.source-snippet { margin: 0; color: #555; line-height: 1.4; }
+
+/* ── ItemList ─────────────────────────────────────────────────────────────── */
+.item-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+
+.item-card {
+  padding: 14px 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.item-type { font-size: 16px; flex-shrink: 0; }
+
+.item-title {
+  font-weight: 500;
+  font-size: 14px;
+  flex: 1;
+  word-break: break-word;
+  color: #1a1a1a;
+}
+
+.item-preview {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.item-error {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #dc2626;
+  background: #fff5f5;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+.item-footer { display: flex; gap: 12px; }
+
+.item-meta { font-size: 12px; color: #999; }
+
+/* ── Status badges ────────────────────────────────────────────────────────── */
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status-pending  { background: #fef3c7; color: #92400e; }
+.status-ready    { background: #d1fae5; color: #065f46; }
+.status-failed   { background: #fee2e2; color: #991b1b; }
+
+/* ── Empty / loading states ───────────────────────────────────────────────── */
+.empty-state {
+  padding: 24px 0;
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+}
+.empty-state p { margin: 4px 0; }
+
+.list-state { margin: 0; padding: 16px 0; text-align: center; color: #888; font-size: 14px; }
+.list-state.error { color: #dc2626; }
