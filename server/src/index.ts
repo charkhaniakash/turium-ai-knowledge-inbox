@@ -1,10 +1,21 @@
 import { buildApp } from './app';
+import { buildContainer } from './container';
+import { config } from './config';
+import { logger } from './lib/logger';
 
-// Port defaults to 4000; full env parsing via config.ts is added in Phase 2.
-const PORT = process.env['PORT'] ?? '4000';
+const container = buildContainer();
+const app = buildApp(container);
 
-const app = buildApp();
+const server = app.listen(config.PORT, () => {
+  logger.info({ port: config.PORT }, 'Server started');
+});
 
-app.listen(Number(PORT), () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
+// Graceful shutdown stub — full implementation in Phase 10
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM received, shutting down');
+  server.close(() => {
+    container.db.close();
+    logger.info('Server closed');
+    process.exit(0);
+  });
 });
