@@ -9,6 +9,8 @@ import { ParagraphChunker } from './services/chunking/ParagraphChunker';
 import { GeminiEmbeddingProvider } from './services/embedding/GeminiEmbeddingProvider';
 import { ProcessingPipeline } from './services/processing/ProcessingPipeline';
 import { ItemProcessor } from './services/processing/ItemProcessor';
+import { UrlFetcher } from './services/url/UrlFetcher';
+import { ContentExtractor } from './services/url/ContentExtractor';
 import { ItemRepository, ChunkRepository } from './domain/interfaces';
 
 /**
@@ -31,6 +33,13 @@ export function buildContainer(): Container {
   const itemRepository = new SqliteItemRepository(db);
   const chunkRepository = new SqliteChunkRepository(db);
 
+  // ── URL services ────────────────────────────────────────────────────────────
+  const urlFetcher = new UrlFetcher(
+    config.URL_FETCH_TIMEOUT_MS,
+    config.URL_MAX_BYTES
+  );
+  const contentExtractor = new ContentExtractor();
+
   // ── Chunking & embedding ────────────────────────────────────────────────────
   const chunker = new ParagraphChunker();
   const embeddingProvider = new GeminiEmbeddingProvider(
@@ -38,12 +47,14 @@ export function buildContainer(): Container {
     config.EMBEDDING_MODEL
   );
 
-  // ── Processing pipeline ─────────────────────────────────────────────────────
+  // ── Processing pipeline (fetch → extract → chunk → embed → store) ───────────
   const pipeline = new ProcessingPipeline(
     chunker,
     embeddingProvider,
     itemRepository,
-    chunkRepository
+    chunkRepository,
+    urlFetcher,
+    contentExtractor
   );
 
   // Start background listener — runs pipeline when item.created fires
@@ -51,7 +62,11 @@ export function buildContainer(): Container {
   itemProcessor.start();
 
   // ── Ingestion ───────────────────────────────────────────────────────────────
-  const ingestorFactory = new IngestorFactory(itemRepository);
+  const ingestorFactory = new IngestorFactory(
+    itemRepository,
+    urlFetcher,
+    contentExtractor
+  );
   const ingestService = new IngestService(ingestorFactory);
 
   return {
