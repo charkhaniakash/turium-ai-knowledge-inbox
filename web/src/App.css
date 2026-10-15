@@ -130,18 +130,28 @@ body {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ── AskBox ───────────────────────────────────────────────────────────────── */
-.ask-box { display: flex; gap: 8px; }
+.ask-box { display: flex; flex-direction: column; gap: 8px; }
 
 .ask-input {
-  flex: 1;
+  width: 100%;
   padding: 9px 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 14px;
   font-family: inherit;
+  resize: vertical;
+  line-height: 1.5;
 }
 .ask-input:focus { outline: none; border-color: #555; }
 .ask-input:disabled { background: #f8f8f8; color: #999; }
+
+.ask-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ask-hint { font-size: 12px; color: #aaa; }
 
 /* ── AnswerPanel ──────────────────────────────────────────────────────────── */
 .answer-panel {
@@ -152,14 +162,59 @@ body {
   border-radius: 6px;
 }
 
+.answer-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #666;
+  font-size: 14px;
+}
+
+.answer-loading-text { color: #666; font-size: 14px; }
+
+/* Dark spinner variant for light backgrounds */
+.spinner-dark {
+  border-color: rgba(0,0,0,0.15);
+  border-top-color: #555;
+}
+
+.answer-body { margin-bottom: 16px; }
+
+.answer-label,
+.sources-label {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #999;
+}
+
 .answer-text {
-  margin: 0 0 12px;
-  line-height: 1.6;
+  margin: 0;
+  line-height: 1.7;
   white-space: pre-wrap;
+  font-size: 14px;
+  color: #1a1a1a;
+}
+
+/* Citation badge — inline superscript matching source card index */
+.citation-badge {
+  display: inline-block;
+  padding: 1px 5px;
+  margin: 0 1px;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  vertical-align: super;
+  line-height: 1;
+  cursor: default;
 }
 
 .answer-error {
-  margin-top: 12px;
+  margin: 0;
   padding: 10px 12px;
   background: #fff5f5;
   border: 1px solid #fca5a5;
@@ -170,8 +225,11 @@ body {
 
 .answer-meta { margin: 0; font-size: 13px; color: #888; }
 
-/* Source cards — Phase 9 */
+/* ── Source cards ─────────────────────────────────────────────────────────── */
+.sources-section { border-top: 1px solid #e8e8e8; padding-top: 14px; }
+
 .source-cards { display: flex; flex-direction: column; gap: 8px; }
+
 .source-card {
   padding: 10px 12px;
   background: #fff;
@@ -179,24 +237,62 @@ body {
   border-radius: 6px;
   font-size: 13px;
 }
+
+.source-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
 .source-index {
-  display: inline-block;
-  width: 22px;
-  height: 22px;
-  line-height: 22px;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
   background: #1a1a1a;
   color: #fff;
   border-radius: 50%;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  margin-right: 8px;
   flex-shrink: 0;
 }
-.source-header { display: flex; align-items: center; margin-bottom: 4px; }
-.source-title { font-weight: 500; }
-.source-score { margin-left: auto; color: #888; }
-.source-snippet { margin: 0; color: #555; line-height: 1.4; }
+
+.source-title {
+  font-weight: 500;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.source-link {
+  color: #1a1a1a;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.source-link:hover { color: #555; }
+
+.source-score {
+  font-size: 11px;
+  color: #888;
+  background: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.source-snippet {
+  margin: 0;
+  color: #555;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
 /* ── ItemList ─────────────────────────────────────────────────────────────── */
 .item-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }

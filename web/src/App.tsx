@@ -43,7 +43,7 @@ export default function App() {
             isLoading={askLoading}
             onAsk={ask}
           />
-          <AnswerPanel result={result} error={askError} />
+          <AnswerPanel result={result} error={askError} isLoading={askLoading} />
         </section>
 
         <section className="section" aria-label="Saved items">
