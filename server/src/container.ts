@@ -11,6 +11,8 @@ import { ProcessingPipeline } from './services/processing/ProcessingPipeline';
 import { ItemProcessor } from './services/processing/ItemProcessor';
 import { UrlFetcher } from './services/url/UrlFetcher';
 import { ContentExtractor } from './services/url/ContentExtractor';
+import { InMemoryVectorStore } from './services/retrieval/InMemoryVectorStore';
+import { Retriever } from './services/retrieval/Retriever';
 import { ItemRepository, ChunkRepository } from './domain/interfaces';
 
 /**
@@ -24,6 +26,7 @@ export interface Container {
   itemRepository: ItemRepository;
   chunkRepository: ChunkRepository;
   ingestService: IngestService;
+  retriever: Retriever;
 }
 
 export function buildContainer(): Container {
@@ -61,6 +64,15 @@ export function buildContainer(): Container {
   const itemProcessor = new ItemProcessor(pipeline);
   itemProcessor.start();
 
+  // ── Retrieval ───────────────────────────────────────────────────────────────
+  const vectorStore = new InMemoryVectorStore(chunkRepository);
+  const retriever = new Retriever(
+    embeddingProvider,
+    vectorStore,
+    config.RETRIEVAL_TOP_K,
+    config.MIN_SIMILARITY_SCORE
+  );
+
   // ── Ingestion ───────────────────────────────────────────────────────────────
   const ingestorFactory = new IngestorFactory(
     itemRepository,
@@ -75,5 +87,6 @@ export function buildContainer(): Container {
     itemRepository,
     chunkRepository,
     ingestService,
+    retriever,
   };
 }
