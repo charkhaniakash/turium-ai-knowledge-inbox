@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Request, Response, NextFunction, RequestHandler } from 'express';
 import { z } from 'zod';
 import { validate } from '../middleware/validate';
 import { IngestService } from '../services/ingestion/IngestService';
@@ -28,11 +28,12 @@ const ingestSchema = z.discriminatedUnion('type', [noteSchema, urlSchema]);
 
 type IngestBody = z.infer<typeof ingestSchema>;
 
-export function buildIngestRouter(ingestService: IngestService): Router {
+export function buildIngestRouter(ingestService: IngestService, rateLimiter?: RequestHandler): Router {
   const router = Router();
 
   router.post(
     '/ingest',
+    ...(rateLimiter !== undefined ? [rateLimiter] : []),
     validate(ingestSchema),
     async (req: Request, res: Response, next: NextFunction) => {
       try {

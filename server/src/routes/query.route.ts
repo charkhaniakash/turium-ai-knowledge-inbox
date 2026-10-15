@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Request, Response, NextFunction, RequestHandler } from 'express';
 import { z } from 'zod';
 import { validate } from '../middleware/validate';
 import { AnswerService } from '../services/answering/AnswerService';
@@ -13,11 +13,12 @@ const querySchema = z.object({
 
 type QueryBody = z.infer<typeof querySchema>;
 
-export function buildQueryRouter(answerService: AnswerService): Router {
+export function buildQueryRouter(answerService: AnswerService, rateLimiter?: RequestHandler): Router {
   const router = Router();
 
   router.post(
     '/query',
+    ...(rateLimiter !== undefined ? [rateLimiter] : []),
     validate(querySchema),
     async (req: Request, res: Response, next: NextFunction) => {
       try {
