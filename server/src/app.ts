@@ -4,14 +4,16 @@ import { config } from './config';
 import { requestLogger } from './middleware/requestLogger';
 import { errorHandler } from './middleware/errorHandler';
 import { healthRouter } from './routes/health.route';
+import { buildIngestRouter } from './routes/ingest.route';
+import { buildItemsRouter } from './routes/items.route';
+import { buildQueryRouter } from './routes/query.route';
 import { NotFoundError } from './lib/errors';
 import { Container } from './container';
 
 /**
  * Builds and returns the Express application.
- * All routes and middleware are registered here; the container (composition root)
- * is passed in so routes can receive services via closure without importing
- * concrete implementations directly.
+ * Route builders receive only the services they need from the container —
+ * routes depend on interfaces, never on the concrete container shape.
  */
 export function buildApp(container: Container): Application {
   const app = express();
@@ -23,9 +25,9 @@ export function buildApp(container: Container): Application {
 
   // ── Routes ─────────────────────────────────────────────────────────────────
   app.use(healthRouter);
-
-  // Phases 3–7 will mount ingest, items, and query routers here using `container`
-  void container; // acknowledge the parameter — will be used in later phases
+  app.use(buildIngestRouter(container.ingestService));
+  app.use(buildItemsRouter(container.itemRepository));
+  app.use(buildQueryRouter());
 
   // ── 404 catch-all ──────────────────────────────────────────────────────────
   app.use((_req: Request, _res: Response, next: NextFunction) => {
