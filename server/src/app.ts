@@ -27,7 +27,7 @@ export function buildApp(container: Container): Application {
   app.use(healthRouter);
   app.use(buildIngestRouter(container.ingestService));
   app.use(buildItemsRouter(container.itemRepository));
-  app.use(buildQueryRouter());
+  app.use(buildQueryRouter(container.answerService));
 
   // ── 404 catch-all ──────────────────────────────────────────────────────────
   app.use((_req: Request, _res: Response, next: NextFunction) => {

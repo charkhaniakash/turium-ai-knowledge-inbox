@@ -13,6 +13,8 @@ import { UrlFetcher } from './services/url/UrlFetcher';
 import { ContentExtractor } from './services/url/ContentExtractor';
 import { InMemoryVectorStore } from './services/retrieval/InMemoryVectorStore';
 import { Retriever } from './services/retrieval/Retriever';
+import { GeminiLLMProvider } from './services/answering/GeminiLLMProvider';
+import { AnswerService } from './services/answering/AnswerService';
 import { ItemRepository, ChunkRepository } from './domain/interfaces';
 
 /**
@@ -27,6 +29,7 @@ export interface Container {
   chunkRepository: ChunkRepository;
   ingestService: IngestService;
   retriever: Retriever;
+  answerService: AnswerService;
 }
 
 export function buildContainer(): Container {
@@ -73,6 +76,10 @@ export function buildContainer(): Container {
     config.MIN_SIMILARITY_SCORE
   );
 
+  // ── Answering ───────────────────────────────────────────────────────────────
+  const llmProvider = new GeminiLLMProvider(config.GEMINI_API_KEY, config.CHAT_MODEL);
+  const answerService = new AnswerService(retriever, llmProvider, itemRepository);
+
   // ── Ingestion ───────────────────────────────────────────────────────────────
   const ingestorFactory = new IngestorFactory(
     itemRepository,
@@ -88,5 +95,6 @@ export function buildContainer(): Container {
     chunkRepository,
     ingestService,
     retriever,
+    answerService,
   };
 }

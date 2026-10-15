@@ -5,7 +5,7 @@ const configSchema = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(4000),
   GEMINI_API_KEY: z.string().min(1, 'GEMINI_API_KEY is required'),
   EMBEDDING_MODEL: z.string().default('gemini-embedding-001'),
-  CHAT_MODEL: z.string().default('gemini-1.5-flash'),
+  CHAT_MODEL: z.string().default('gemini-2.5-flash'),
   DATABASE_PATH: z.string().default('./data/inbox.db'),
   LOG_LEVEL: z
     .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'silent'])
